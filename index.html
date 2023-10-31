@@ -1,0 +1,175 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Chart</h1>
+    <canvas id="chart"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+
+        var ctx, chart
+
+        window.addEventListener("load", function () {
+            ctx = document.getElementById('chart')
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['January', 'febraray', 'March', 'April', 'May'],
+                    datasets: [{
+                        label: 'attendance',
+                        data: [100, 23, 67, 89, 53],
+                        // backgroundColor
+                    },
+                    {
+                        label: 'Performance',
+                        data: [90, 45, 47, 49, 53]
+                    }
+                    ],
+                    borderWidth: 1
+                },
+                options: {
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }
+                        ]
+                    }
+                }
+            })
+        })
+    </script>
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div>
+    <canvas id="myChart" width="400" height="200"></canvas>
+</div>
+
+<div>
+    <form id="editForm">
+        <label for="selectedMonth">Select Month:</label>
+        <select id="selectedMonth"></select>
+        <br>
+        <label for="editValue">Edit Value:</label>
+        <input type="number" id="editValue" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const initialData = [10, 20, 15, 25, 30, 18, 22, 17, 28, 12, 20, 15];
+
+    let chart;
+    let formData = {};
+
+    document.addEventListener("DOMContentLoaded", function() {
+        initializeChart();
+        initializeForm();
+
+        // Initially render the chart
+        updateChart();
+
+        // Handle form submission
+        document.getElementById("editForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const selectedMonth = document.getElementById("selectedMonth").value;
+            const editedValue = parseInt(document.getElementById("editValue").value, 10);
+
+            // Update data for the selected month
+            formData[selectedMonth] = editedValue;
+
+            // Remove the data point for the selected month
+            const monthIndex = months.indexOf(selectedMonth);
+            initialData.splice(monthIndex, 1);
+
+            // Render the updated chart
+            updateChart();
+
+            // Reset the form
+            this.reset();
+        });
+    });
+
+    function initializeChart() {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Monthly Data',
+                    data: initialData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function initializeForm() {
+        const select = document.getElementById("selectedMonth");
+
+        months.forEach(month => {
+            const option = document.createElement("option");
+            option.value = month;
+            option.text = month;
+            select.appendChild(option);
+        });
+    }
+
+    function updateChart() {
+        // Clone the initial data array
+        const newData = [...initialData];
+
+        // Update the cloned data array with the edited values
+        for (const [month, value] of Object.entries(formData)) {
+            const monthIndex = months.indexOf(month);
+            if (monthIndex !== -1) {
+                newData.splice(monthIndex, 0, value);
+            }
+        }
+
+        // Update chart data and redraw
+        chart.data.datasets[0].data = newData;
+        chart.update();
+    }
+</script>
+
+</body>
+</html>
+
