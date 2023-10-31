@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Data Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div>
+  <label for="monthSelect">Select Month:</label>
+  <select id="monthSelect" onchange="updateFormValues()">
+    <option value="January">January</option>
+    <option value="February">February</option>
+    <option value="March">March</option>
+    <option value="April">April</option>
+    <option value="May">May</option>
+    <option value="June">June</option>
+    <option value="July">July</option>
+    <option value="August">August</option>
+    <option value="September">September</option>
+    <option value="October">October</option>
+    <option value="November">November</option>
+    <option value="December">December</option>
+  </select>
+</div>
+
+<canvas id="myChart" width="400" height="200"></canvas>
+
+<div>
+  <form id="dataForm" onsubmit="submitForm(event)">
+    <label for="valueInput">Value:</label>
+    <input type="number" id="valueInput" required>
+    <label for="attendanceInput">Attendance:</label>
+    <input type="number" id="attendanceInput" required>
+    <label for="performanceInput">Performance:</label>
+    <input type="number" id="performanceInput" required>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<script>
+  let chartData = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120];
+  let attendanceData = [90, 85, 92, 88, 95, 89, 91, 93, 94, 87, 96, 98];
+  let performanceData = [70, 75, 80, 85, 78, 82, 88, 90, 92, 85, 80, 75];
+
+  const ctx = document.getElementById('myChart').getContext('2d');
+
+  const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      datasets: [
+        {
+          label: 'Monthly Data',
+          data: chartData,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          fill: false
+        },
+        {
+          label: 'Attendance',
+          data: attendanceData,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          fill: false
+        },
+        {
+          label: 'Performance',
+          data: performanceData,
+          borderColor: 'rgba(255, 205, 86, 1)',
+          borderWidth: 1,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  function updateFormValues() {
+    const monthSelect = document.getElementById('monthSelect');
+    const selectedMonth = monthSelect.value;
+    const valueInput = document.getElementById('valueInput');
+    const attendanceInput = document.getElementById('attendanceInput');
+    const performanceInput = document.getElementById('performanceInput');
+
+    valueInput.value = chartData[myChart.data.labels.indexOf(selectedMonth)];
+    attendanceInput.value = attendanceData[myChart.data.labels.indexOf(selectedMonth)];
+    performanceInput.value = performanceData[myChart.data.labels.indexOf(selectedMonth)];
+  }
+
+  function submitForm(event) {
+    event.preventDefault();
+    const monthSelect = document.getElementById('monthSelect');
+    const selectedMonth = monthSelect.value;
+    const valueInput = document.getElementById('valueInput').value;
+    const attendanceInput = document.getElementById('attendanceInput').value;
+    const performanceInput = document.getElementById('performanceInput').value;
+
+    chartData.push(parseFloat(valueInput));
+    attendanceData.push(parseFloat(attendanceInput));
+    performanceData.push(parseFloat(performanceInput));
+
+    myChart.update();
+
+    document.getElementById('dataForm').reset();
+  }
+</script>
+
+</body>
+</html>
